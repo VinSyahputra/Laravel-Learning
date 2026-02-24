@@ -111,7 +111,7 @@
     <x-common.preloader/>
     {{-- preloader end --}}
 
-    <div class="min-h-screen xl:flex">
+    <div class="min-h-screen overflow-x-hidden">
         @include('layouts.backdrop')
         @include('layouts.sidebar')
 
