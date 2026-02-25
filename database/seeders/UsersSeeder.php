@@ -22,5 +22,21 @@ class UsersSeeder extends Seeder
 
         // Assign role
         $user->assignRole('admin');
-    }
+
+        $teacher = User::factory()->create([
+            'name' => 'Teacher User',
+            'email' => 'teacher@mail.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $teacher->assignRole('teacher');
+
+        $student = User::factory()->create([
+            'name' => 'Student User',
+            'email' => 'student@mail.com',
+            'password' => bcrypt('password'),
+        ]);
+
+        $student->assignRole('student');    
+    }                                                                                                                                                                                                                                                  
 }
