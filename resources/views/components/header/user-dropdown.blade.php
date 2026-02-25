@@ -6,7 +6,7 @@
     closeDropdown() {
         this.dropdownOpen = false;
     }
-}" @click.away="closeDropdown()">
+}" @click.outside="closeDropdown()">
     <!-- User Button -->
     <button
         class="flex items-center text-gray-700 dark:text-gray-400"
