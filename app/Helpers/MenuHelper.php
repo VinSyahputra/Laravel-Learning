@@ -10,12 +10,14 @@ class MenuHelper
             [
                 'icon' => 'dashboard',
                 'name' => 'Dashboard',
-                'path' => '/'
+                'path' => '/',
+                'can' => 'master.dashboard'
             ],
             [
                 'icon' => 'user-profile',
                 'name' => 'My Information',
                 'path' => '/profile',
+                'can' => 'master.information',
             ],
         ];
     }
@@ -26,22 +28,26 @@ class MenuHelper
             [
                 'icon' => 'my-class',
                 'name' => 'My Class',
-                'path' => '/my-class'
+                'path' => '/student/my-class',
+                'can' => 'student.my-class.view'
             ],
             [
                 'icon' => 'list-of-classes',
                 'name' => 'List of Classes',
-                'path' => '/classes'
+                'path' => '/student/classes',
+                'can' => 'student.class.view'
             ],
             [
                 'icon' => 'certificates',
                 'name' => 'Certificates',
-                'path' => '/certificates'
+                'path' => '/student/certificates',
+                'can' => 'student.certificate.view'
             ],
             [
                 'icon' => 'reports',
                 'name' => 'Raports',
-                'path' => '/raports'
+                'path' => '/student/raports',
+                'can' => 'student.report.view'
             ]
         ];
     }
@@ -52,27 +58,32 @@ class MenuHelper
             [
                 'icon' => 'my-class',
                 'name' => 'My Class',
-                'path' => '/my-class'
+                'path' => '/teacher/my-class',
+                'can' => 'teacher.my-class.view'
             ],
             [
                 'icon' => 'list-of-classes',
                 'name' => 'List of Classes',
-                'path' => '/classes'
+                'path' => '/teacher/classes',
+                'can' => 'teacher.class.view'
             ],
             [
                 'icon' => 'quiz-management',
                 'name' => 'Quiz',
-                'path' => '/quiz'
+                'path' => '/teacher/quiz',
+                'can' => 'teacher.quiz.view'
             ],
             [
                 'icon' => 'question-management',
                 'name' => 'Questions',
-                'path' => '/questions'
+                'path' => '/teacher/questions',
+                'can' => 'teacher.question.view'
             ],
             [
                 'icon' => 'reports',
                 'name' => 'Raports',
-                'path' => '/raports'
+                'path' => '/teacher/raports',
+                'can' => 'teacher.report.view'
             ]
         ];
     }
@@ -83,24 +94,25 @@ class MenuHelper
             [
                 'icon' => 'generals',
                 'name' => 'Generals',
-                'path' => '/option/generals'
+                'path' => '/admin/option/generals',
+                'can' => 'admin.tool.general'
             ],
             [
                 'icon' => 'tools',
                 'name' => 'Tools',
                 'subItems' => [
-                    ['name' => 'Log Viewer', 'path' => '/log-viewer'],
-                    ['name' => 'Email Tester', 'path' => '/email-tester'],
-                    ['name' => 'Queue Cron', 'path' => '/queue-cron'],
+                    ['name' => 'Log Viewer', 'path' => '/admin/log-viewer', 'can' => 'admin.tool.log'],
+                    ['name' => 'Email Tester', 'path' => '/admin/email-tester', 'can' => 'admin.tool.email-tester'],
+                    ['name' => 'Queue Cron', 'path' => '/admin/queue-cron', 'can' => 'admin.tool.queue'],
                 ],
             ],
             [
                 'icon' => 'user-management',
                 'name' => 'User Management',
                 'subItems' => [
-                    ['name' => 'List User', 'path' => '/users'],
-                    ['name' => 'Roles', 'path' => '/roles'],
-                    ['name' => 'Permissions', 'path' => '/permissions'],
+                    ['name' => 'List User', 'path' => '/admin/users', 'can' => 'admin.user.view'],
+                    ['name' => 'Roles', 'path' => '/admin/roles', 'can' => 'admin.role.view'],
+                    ['name' => 'Permissions', 'path' => '/admin/permissions', 'can' => 'admin.permission.view'],
                 ],
             ]
         ];
@@ -115,15 +127,18 @@ class MenuHelper
             ],
             [
                 'title' => 'Teacher Menu',
-                'items' => self::getTeacherMenuItems()
+                'items' => self::getTeacherMenuItems(),
+                'can' => 'teacher.*'
             ],
             [
                 'title' => 'Student Menu',
-                'items' => self::getStudentMenuItems()
+                'items' => self::getStudentMenuItems(),
+                'can' => 'student.*'
             ],
             [
                 'title' => 'Admin Tools',
-                'items' => self::getAdminToolsItems()
+                'items' => self::getAdminToolsItems(),
+                'can' => 'admin.*'
             ]
         ];
     }

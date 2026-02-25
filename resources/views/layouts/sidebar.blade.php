@@ -80,6 +80,22 @@
         <nav class="mb-6">
             <div class="flex flex-col gap-4">
                 @foreach ($menuGroups as $groupIndex => $menuGroup)
+                    @php
+                        $groupPermission = $menuGroup['can'] ?? null;
+                        $canGroup = true;
+
+                        if ($groupPermission) {
+                            if (str_contains($groupPermission, '*')) {
+                                $permissionPrefix = rtrim($groupPermission, '*');
+                                $canGroup = auth()->check() && auth()->user()->getAllPermissions()->contains(function ($permission) use ($permissionPrefix) {
+                                    return str_starts_with($permission->name, $permissionPrefix);
+                                });
+                            } else {
+                                $canGroup = auth()->user()?->can($groupPermission);
+                            }
+                        }
+                    @endphp
+                    @if ($canGroup)
                     <div>
                         <!-- Menu Group Title -->
                         <h2 class="mb-4 text-xs uppercase flex leading-[20px] text-gray-400"
@@ -99,6 +115,10 @@
                         <!-- Menu Items -->
                         <ul class="flex flex-col gap-1">
                             @foreach ($menuGroup['items'] as $itemIndex => $item)
+                                @php
+                                    $canItem = !isset($item['can']) || auth()->user()?->can($item['can']);
+                                @endphp
+                                @if ($canItem)
                                 <li>
                                     @if (isset($item['subItems']))
                                         <!-- Menu Item with Submenu -->
@@ -148,6 +168,10 @@
                                         <div x-show="isSubmenuOpen({{ $groupIndex }}, {{ $itemIndex }}) && ($store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen)">
                                             <ul class="mt-2 space-y-1 ml-9">
                                                 @foreach ($item['subItems'] as $subItem)
+                                                    @php
+                                                        $canSubItem = !isset($subItem['can']) || auth()->user()?->can($subItem['can']);
+                                                    @endphp
+                                                    @if ($canSubItem)
                                                     <li>
                                                         <a href="{{ $subItem['path'] }}" class="menu-dropdown-item"
                                                             :class="isActive('{{ $subItem['path'] }}') ?
@@ -174,6 +198,7 @@
                                                             </span>
                                                         </a>
                                                     </li>
+                                                    @endif
                                                 @endforeach
                                             </ul>
                                         </div>
@@ -210,9 +235,11 @@
                                         </a>
                                     @endif
                                 </li>
+                                @endif
                             @endforeach
                         </ul>
                     </div>
+                    @endif
                 @endforeach
             </div>
         </nav>
