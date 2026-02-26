@@ -120,20 +120,10 @@ class MenuHelper
 
     public static function getMenuGroups()
     {
-        return [
+        $menuGroups = [
             [
                 'title' => 'Menu',
                 'items' => self::getMainNavItems()
-            ],
-            [
-                'title' => 'Teacher Menu',
-                'items' => self::getTeacherMenuItems(),
-                'can' => 'teacher.*'
-            ],
-            [
-                'title' => 'Student Menu',
-                'items' => self::getStudentMenuItems(),
-                'can' => 'student.*'
             ],
             [
                 'title' => 'Admin Tools',
@@ -141,6 +131,90 @@ class MenuHelper
                 'can' => 'admin.*'
             ]
         ];
+
+        // Get active role from session
+        $activeRole = session('active_role');
+        $user = auth()->user();
+
+        // Auto-set active role if not set and user has only one of teacher/student
+        if (!$activeRole && $user) {
+            if ($user->hasRole('teacher') && !$user->hasRole('student')) {
+                $activeRole = 'teacher';
+            } elseif ($user->hasRole('student') && !$user->hasRole('teacher')) {
+                $activeRole = 'student';
+            }
+        }
+
+        // Add Teacher Menu if active role is teacher
+        if ($activeRole === 'teacher') {
+            $menuGroups[] = [
+                'title' => 'Teacher Menu',
+                'items' => self::getTeacherMenuItems(),
+                'can' => 'teacher.*'
+            ];
+        }
+
+        // Add Student Menu if active role is student
+        if ($activeRole === 'student') {
+            $menuGroups[] = [
+                'title' => 'Student Menu',
+                'items' => self::getStudentMenuItems(),
+                'can' => 'student.*'
+            ];
+        }
+
+        // If no active role set but user has both roles, default to showing teacher menu
+        if (!$activeRole && $user && $user->hasRole('teacher') && $user->hasRole('student')) {
+            $menuGroups[] = [
+                'title' => 'Teacher Menu',
+                'items' => self::getTeacherMenuItems(),
+                'can' => 'teacher.*'
+            ];
+        }
+
+        return $menuGroups;
+    }
+
+    /**
+     * Check if user has both teacher and student roles
+     */
+    public static function userHasBothRoles(): bool
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return false;
+        }
+        return $user->hasRole('teacher') && $user->hasRole('student');
+    }
+
+    /**
+     * Get the current active role
+     */
+    public static function getActiveRole(): ?string
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return null;
+        }
+
+        $activeRole = session('active_role');
+
+        // Validate that user still has this role
+        if ($activeRole && !$user->hasRole($activeRole)) {
+            session()->forget('active_role');
+            $activeRole = null;
+        }
+
+        // Auto-detect if not set
+        if (!$activeRole) {
+            if ($user->hasRole('teacher')) {
+                $activeRole = 'teacher';
+            } elseif ($user->hasRole('student')) {
+                $activeRole = 'student';
+            }
+        }
+
+        return $activeRole;
     }
 
     public static function isActive($path)

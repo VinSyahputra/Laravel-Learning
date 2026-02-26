@@ -1,3 +1,9 @@
+@php
+    use App\Helpers\MenuHelper;
+    $hasBothRoles = MenuHelper::userHasBothRoles();
+    $initialRole = MenuHelper::getActiveRole() ?? 'teacher';
+@endphp
+
 <header
     class="sticky top-0 flex w-full bg-white border-gray-200 z-99999 dark:border-gray-800 dark:bg-gray-900 xl:border-b"
     x-data="{
@@ -96,7 +102,7 @@
             <div class="flex items-center gap-2 2xsm:gap-3">
 
                 <!-- Switch Teacher to Student -->
-                <x-header.switch-role />
+                <x-header.switch-role :has-both-roles="$hasBothRoles" :initial-role="$initialRole" />
 
                 <!-- Theme Toggle Button -->
                 <button
