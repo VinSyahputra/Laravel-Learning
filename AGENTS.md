@@ -274,6 +274,29 @@ php artisan route:cache
 - Import all classes (no inline FQN)
 - Use `__DIR__` or `base_path()` for paths, not relative paths
 
+## Forbidden Patterns
+
+- Controllers MUST NOT access Models directly
+- Business logic MUST NOT exist in Blade
+- Do not query database inside View Components
+- Always use Service layer
+
+## Architecture Decisions
+
+- Session used for active_role to avoid DB write on switch
+- Alpine.js preferred over Livewire for UI micro-interaction
+- Menu generated dynamically via Repository pattern
+
+## Example Tasks
+
+### Adding Teacher Page
+
+1. Add page mapping in TeacherMenuRepository
+2. Create route in teacher group
+3. Add permission teacher.xxx.view
+4. Create blade view
+5. Use TeacherMenuService
+
 ---
 
 ## How to Update This Document
