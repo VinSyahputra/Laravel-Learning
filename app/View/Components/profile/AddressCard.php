@@ -8,12 +8,8 @@ use Illuminate\View\Component;
 
 class AddressCard extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct()
+    public function __construct(public readonly mixed $data = null)
     {
-        //
     }
 
     /**

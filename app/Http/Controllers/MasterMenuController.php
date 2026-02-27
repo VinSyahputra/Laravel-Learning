@@ -21,14 +21,4 @@ class MasterMenuController extends Controller
         ]);
     }
 
-    public function profile()
-    {
-        $page = $this->service->getByKey('profile');
-
-        return view('pages.blank-resource', [
-            'title' => $page['title'],
-            'group' => 'Master',
-            'key' => $page['key'],
-        ]);
-    }
 }

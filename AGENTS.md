@@ -4,6 +4,59 @@ This document provides guidance for AI agents working with the TailAdmin Laravel
 
 ## Phase History
 
+### Phase 2: Profile Management System ✅ COMPLETED
+
+- **Created:** 2026-02-27
+- **Status:** COMPLETED
+- **Description:** Full profile management — 6 display cards, 6 edit modals, avatar upload, validation UX, delete with confirmation, global toast
+
+#### Key Files
+
+| File | Status | Description |
+|------|--------|-------------|
+| `app/Http/Controllers/ProfileController.php` | NEW | `index`, `update`, `uploadAvatar`, `deleteAcademic`, `deleteExperience` |
+| `app/Services/ProfileService.php` | NEW | `getProfileData`, `update` → dispatches to section handlers |
+| `resources/views/pages/profile.blade.php` | NEW | Assembles all 6 card components |
+| `resources/views/components/profile/profile-card.blade.php` | NEW | Avatar + social/bio edit triggers; props: `:data` (UserProfile) + `:user` (User) |
+| `resources/views/components/profile/personal-info-card.blade.php` | NEW | Bio fields display |
+| `resources/views/components/profile/address-card.blade.php` | NEW | Address display |
+| `resources/views/components/profile/academic-card.blade.php` | NEW | Academic list + per-item delete button |
+| `resources/views/components/profile/experience-card.blade.php` | NEW | Experience list + per-item delete button |
+| `resources/views/components/profile/account-card.blade.php` | NEW | Email display + change password trigger |
+| `resources/views/components/profile/modal/edit-bio-info.blade.php` | NEW | name, gender, birth_date, phone, identity_card_number, email, bio textarea |
+| `resources/views/components/profile/modal/edit-social-links.blade.php` | NEW | facebook, x, linkedin, instagram URLs |
+| `resources/views/components/profile/modal/edit-address.blade.php` | NEW | country, city_state, postal_code, tax_id |
+| `resources/views/components/profile/modal/edit-academic.blade.php` | NEW | Dynamic multi-row (Alpine); `old('entries')` restore |
+| `resources/views/components/profile/modal/edit-experience.blade.php` | NEW | Dynamic multi-row (Alpine); `old('entries')` restore |
+| `resources/views/components/profile/modal/edit-account.blade.php` | NEW | Change password; show/hide toggles |
+| `resources/views/components/ui/toast.blade.php` | NEW | Bottom-right toast; success/error; 5s progress bar; Alpine driven |
+| `resources/views/components/ui/confirm-modal.blade.php` | NEW | Global delete confirm; listens `confirm-delete` window event; Alpine driven |
+| `resources/views/layouts/app.blade.php` | MODIFIED | Added `<x-ui.toast>` + `<x-ui.confirm-modal>` before `</body>` |
+| `routes/web.php` | MODIFIED | Added avatar + delete routes |
+
+#### Routes Added
+
+```php
+POST   /profile/avatar          → profile.avatar          (uploadAvatar)
+DELETE /profile/academic/{id}   → profile.academic.delete  (deleteAcademic)
+DELETE /profile/experience/{id} → profile.experience.delete (deleteExperience)
+```
+
+All under `prefix('profile')->name('profile.')->middleware('can:master.information')`.
+
+#### Key Patterns for Future Agents
+
+1. **All profile forms** POST to `/profile/update` with `<input type="hidden" name="section" value="bio|social|address|academic|experience|account">` — controller dispatches via `match($section)`
+2. **Modal auto-reopen** — use `<script>document.addEventListener('alpine:init', () => setTimeout(() => window.dispatchEvent(...), 50))</script>` inside `@if ($errors->hasAny([...]))`. Never use `x-init` for this.
+3. **Alpine + Blade `}` conflict** — never put Alpine objects inside `x-data="..."` attributes. Use `Alpine.data('name', () => ({...}))` in a `<script>` tag and `x-data="name"` string reference.
+4. **`old('entries')` priority** — Academic/Experience: `old('entries')` → DB data → empty default row, resolved in `@php` block before `@json()`.
+5. **Avatar prop** — `profile-card.blade.php` takes `:user` (User model) separately from `:data` (UserProfile). Avatar is `$user->avatar`, stored in `public` disk `avatars/` folder.
+6. **Password** — use Laravel's built-in `current_password` rule. Never `Hash::check` in service. Never restore `current_password` via `old()`.
+7. **Delete scoping** — always `Auth::user()->relationship()->findOrFail($id)` to prevent cross-user deletes.
+8. **Confirm delete** — dispatch `confirm-delete` window event with `{ action, title, message }`; global `<x-ui.confirm-modal>` handles the rest.
+
+---
+
 ### Phase 1: Role Switching System ✅ COMPLETED
 
 - **Created:** 2026-02-26

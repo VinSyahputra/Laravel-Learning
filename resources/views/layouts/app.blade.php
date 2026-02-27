@@ -131,6 +131,12 @@
 
     </div>
 
+    <!-- Global Toast Notification -->
+    <x-ui.toast />
+
+    <!-- Global Confirm Delete Modal -->
+    <x-ui.confirm-modal />
+
 </body>
 
 @stack('scripts')

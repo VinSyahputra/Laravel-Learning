@@ -8,12 +8,11 @@ use Illuminate\View\Component;
 
 class ProfileCard extends Component
 {
-    /**
-     * Create a new component instance.
-     */
-    public function __construct()
+    public function __construct(
+        public readonly mixed $data = null,
+        public readonly mixed $user = null,
+    )
     {
-        //
     }
 
     /**

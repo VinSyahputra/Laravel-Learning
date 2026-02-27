@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminMenuController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MasterMenuController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentMenuController;
 use App\Http\Controllers\TeacherMenuController;
@@ -25,9 +26,15 @@ Route::middleware('auth')->group(function () {
         ->name('dashboard')
         ->middleware('can:master.dashboard');
 
-    Route::get('/profile', [MasterMenuController::class, 'profile'])
-        ->name('master.profile')
-        ->middleware('can:master.information');
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('master.profile')->middleware('can:master.information');
+        Route::post('/update', [ProfileController::class, 'update'])->name('update')->middleware('can:master.information');
+        Route::post('/avatar', [ProfileController::class, 'uploadAvatar'])->name('avatar')->middleware('can:master.information');
+        Route::delete('/academic/{id}', [ProfileController::class, 'deleteAcademic'])->name('academic.delete')->middleware('can:master.information');
+        Route::delete('/experience/{id}', [ProfileController::class, 'deleteExperience'])->name('experience.delete')->middleware('can:master.information');
+        Route::get('/edit', [MasterMenuController::class, 'show'])->defaults('page', 'edit')->name('edit')->middleware('can:master.information');
+        Route::get('/password', [MasterMenuController::class, 'show'])->defaults('page', 'password')->name('password')->middleware('can:master.information');
+    });
 
     Route::prefix('teacher')->name('teacher.')->middleware(['role_or_permission:teacher|admin', 'active_role:teacher'])->group(function () {
         Route::get('/', [TeacherMenuController::class, 'index'])->name('index');
